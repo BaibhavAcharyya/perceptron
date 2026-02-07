@@ -10,7 +10,7 @@ const X = () => {
 
   return(
   <div className="flex flex-col gap-2 p-4">
-    <Button onClick={() =>  createProject({ name: "New Project" })
+    <Button onClick={() => createProject({ name: "New Project" })
       }>
       Add New
     </Button>

@@ -12,5 +12,5 @@ export default defineSchema({
                 v.literal("failed")
             ),
         ),
-    }).index("byOwner", ["ownerId"]),
+    }).index("by_owner", ["ownerId"]),
 });
