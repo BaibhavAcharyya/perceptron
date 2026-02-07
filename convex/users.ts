@@ -8,7 +8,7 @@ export async function getCurrentUserOrThrow(ctx: MutationCtx | QueryCtx) {
   }
   const user = await ctx.db
     .query("users")
-    .filter(q => q.eq(q.field("tokenIdentifier"), identity.tokenIdentifier))
+    .withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
     .unique();
   if (!user) {
     throw new Error("User not found in users table");
