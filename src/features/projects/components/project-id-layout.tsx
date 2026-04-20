@@ -42,7 +42,7 @@ export const ProjectIdLayout = ({
                         {children}
                     </Allotment.Pane>
                 </Allotment>
-            </div>
         </div>
+    </div>
     );
 };
