@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -114,13 +116,10 @@
 
 @layer base {
   * {
-    border-color: var(--border);
-    outline-color: rgb(var(--ring) / 0.5);
+    @apply border-border outline-ring/50;
   }
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    user-select: none;
+    @apply bg-background text-foreground select-none;
   }
 }
 
@@ -149,18 +148,13 @@
 }
 
 ::-webkit-scrollbar {
-  width: 0.625rem;
-  height: 0.625rem;
+  @apply w-2.5 h-2.5;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: transparent;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 9999px;
-  background-color: var(--border);
-  border: 1px solid transparent;
-  border-style: solid;
-  background-clip: padding-box;
+  @apply rounded-full bg-border border-[1px] border-transparent border-solid bg-clip-padding;
 }
