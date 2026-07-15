@@ -103,7 +103,7 @@ export async function POST(request: Request) {
       .replace("{documentation}", documentationContext);
 
     const { output } = await generateText({
-      model: google("gemini-2.5-flash"),
+      model: google("gemini-1.5-pro"),
       //model: anthropic('claude-3-haiku-20240307'),
       output: Output.object({ schema: quickEditSchema }),
       prompt,
