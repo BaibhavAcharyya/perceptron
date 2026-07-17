@@ -11,6 +11,12 @@ const requestSchema = z.object({
   projectId: z.string(),
 });
 
+/**
+ * Resets the export status for an authenticated project.
+ *
+ * @param request - The request containing the project ID.
+ * @returns A success response containing the project ID, or an error response when authentication or server configuration fails.
+ */
 export async function POST(request: Request) {
   const { userId } = await auth();
 

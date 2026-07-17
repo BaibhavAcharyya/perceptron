@@ -13,6 +13,11 @@ const requestSchema = z.object({
   description: z.string().max(350).optional(),
 });
 
+/**
+ * Initiates a GitHub repository export for the authenticated user.
+ *
+ * @returns A JSON response containing the project and event identifiers on success, or an error message with the corresponding HTTP status.
+ */
 export async function POST(request: Request) {
   const { userId } = await auth();
 

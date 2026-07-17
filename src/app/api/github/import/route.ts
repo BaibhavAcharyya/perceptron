@@ -11,6 +11,13 @@ const requestSchema = z.object({
   url: z.url(),
 });
 
+/**
+ * Extracts the repository owner and name from a GitHub URL.
+ *
+ * @param url - The GitHub repository URL to parse
+ * @returns The repository owner and name
+ * @throws Error if the URL does not contain a valid GitHub repository path
+ */
 function parseGitHubUrl(url: string) {
   const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
   if (!match) {
@@ -20,6 +27,12 @@ function parseGitHubUrl(url: string) {
   return { owner: match[1], repo: match[2].replace(/\.git$/, "") };
 }
 
+/**
+ * Imports a GitHub repository for the authenticated user.
+ *
+ * @param request - The request containing the GitHub repository URL.
+ * @returns A response containing the created project ID and import event ID.
+ */
 export async function POST(request: Request) {
   const { userId } = await auth();
 

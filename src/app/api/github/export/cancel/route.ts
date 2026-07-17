@@ -12,6 +12,12 @@ const requestSchema = z.object({
   projectId: z.string(),
 });
 
+/**
+ * Cancels a GitHub export for the specified project.
+ *
+ * @param request - The request containing the project identifier.
+ * @returns A response indicating whether the export was cancelled, including the project identifier and event ID.
+ */
 export async function POST(request: Request) {
   const { userId } = await auth();
 
