@@ -21,10 +21,16 @@ function parseGitHubUrl(url: string) {
 }
 
 export async function POST(request: Request) {
-  const { userId } = await auth();
+  const { userId, has } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const hasPro = has({ plan: "pro" });
+
+  if (!hasPro) {
+    return NextResponse.json({ error: "Pro plan required" }, { status: 403 });
   }
 
   const body = await request.json();
@@ -32,7 +38,7 @@ export async function POST(request: Request) {
 
   const { owner, repo } = parseGitHubUrl(url);
   // https://github.com/BaibhavAcharyya/perceptron
-  // { owner: "Baibhav Acharyya", repo: "perceptron" }
+  // { owner: "Baibhav Acharyya", repo: "perceptron-dev" }
 
   const client = await clerkClient();
   const tokens = await client.users.getUserOauthAccessToken(

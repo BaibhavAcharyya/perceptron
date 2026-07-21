@@ -114,58 +114,76 @@ export const processMessage = inngest.createFunction(
       conversation.title === DEFAULT_CONVERSATION_TITLE;
 
     if (shouldGenerateTitle) {
-       const titleAgent = createAgent({
-        name: "title-generator",
-        system: TITLE_GENERATOR_SYSTEM_PROMPT,
-        model: gemini({
-          model: "gemini-2.5-flash-lite",
-          defaultParameters: {
-            generationConfig: {
-              temperature: 0.0,
-              maxOutputTokens: 60,
-            },
-          },
-        }),
-       });
-
-       const { output } = await titleAgent.run(message, { step });
-
-       const textMessage = output.find(
-        (m) => m.type === "text" && m.role === "assistant"
-      );
-
-      if (textMessage?.type === "text") {
-         const title = 
-          typeof textMessage.content === "string"
-            ? textMessage.content.trim()
-            : textMessage.content
-              .map((c) => c.text)
-              .join("")
-              .trim();
-
-        if (title) {
-          await step.run("update-conversation-title", async () => {
-            await convex.mutation(api.system.updateConversationTitle, {
-              internalKey,
-              conversationId,
-              title,
-            });
-          });
+      try {
+        const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+        if (!apiKey) {
+          throw new NonRetriableError("GOOGLE_GENERATIVE_AI_API_KEY is not configured");
         }
+
+        const titleAgent = createAgent({
+          name: "title-generator",
+          system: TITLE_GENERATOR_SYSTEM_PROMPT,
+          model: gemini({
+            apiKey,
+            model: "gemini-2.5-flash",
+            defaultParameters: {
+              generationConfig: {
+                temperature: 0.0,
+                maxOutputTokens: 60,
+              },
+            },
+          }),
+        });
+
+        const { output } = await titleAgent.run(message, { step });
+
+        const textMessage = output.find(
+          (m) => m.type === "text" && m.role === "assistant"
+        );
+
+        if (textMessage?.type === "text") {
+          const title = 
+            typeof textMessage.content === "string"
+              ? textMessage.content.trim()
+              : textMessage.content
+                .map((c) => c.text)
+                .join("")
+                .trim();
+
+          if (title) {
+            await step.run("update-conversation-title", async () => {
+              await convex.mutation(api.system.updateConversationTitle, {
+                internalKey,
+                conversationId,
+                title,
+              });
+            });
+          }
+        }
+      } catch (titleError) {
+        // Log title generation error but don't fail the entire process
+        console.error("Title generation failed:", titleError);
+        // Continue with main message processing
       }
     }
 
     // Create the coding agent with file tools
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    if (!apiKey) {
+      throw new NonRetriableError("GOOGLE_GENERATIVE_AI_API_KEY is not configured");
+    }
+
     const codingAgent = createAgent({
       name: "perceptron",
       description: "An expert AI coding assistant",
       system: systemPrompt,
       model: gemini({
+        apiKey,
         model: "gemini-2.5-flash",
         defaultParameters: {
           generationConfig: {
             temperature: 0.2,
-            maxOutputTokens: 1000,
+            maxOutputTokens: 6000,
           },
         },
       }),
