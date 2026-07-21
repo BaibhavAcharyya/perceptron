@@ -39,7 +39,7 @@ export const NewProjectDialog = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (message: PromptInputMessage) => {
-    if (!message.text) return;
+    if (!message.text?.trim()) return;
 
     setIsSubmitting(true);
 
@@ -67,7 +67,7 @@ export const NewProjectDialog = ({
         showCloseButton={false}
         className="sm:max-w-lg p-0"
       >
-        <DialogHeader className="hidden">
+        <DialogHeader className="sr-only">
           <DialogTitle>What do you want to build?</DialogTitle>
           <DialogDescription>
             Describe your project and AI will help you create it.
