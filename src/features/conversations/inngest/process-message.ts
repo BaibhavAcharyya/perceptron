@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { createAgent, gemini , anthropic , createNetwork } from '@inngest/agent-kit';
 
 import { inngest } from "@/inngest/client";
@@ -17,7 +18,7 @@ import { createCreateFilesTool } from './tools/create-files';
 import { createCreateFolderTool } from './tools/create-folder';
 import { createRenameFileTool } from './tools/rename-file';
 import { createDeleteFilesTool } from './tools/delete-files';
-import { createScrapeUrlsTool } from './tools/scrape-urls';
+import { createWebTools } from './tools/web-tools';
 
 interface MessageEvent {
   messageId: Id<"messages">;
@@ -195,7 +196,10 @@ export const processMessage = inngest.createFunction(
         createCreateFolderTool({ projectId, internalKey }),
         createRenameFileTool({ internalKey }),
         createDeleteFilesTool({ internalKey }),
-        createScrapeUrlsTool(),
+        ...await createWebTools({
+          sessionId: createHash("sha256").update(conversationId).digest("hex"),
+          modelName: "gemini-2.5-flash",
+        }),
        ],
     });
 
