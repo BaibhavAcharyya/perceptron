@@ -16,6 +16,7 @@ let modelTurn: number;
 
 beforeEach(() => {
   delete process.env.FIRECRAWL_API_KEY;
+  delete process.env.FIRECRAWL_API_URL;
   delete process.env.PERCEPTRON_WEB_PROVIDER;
   requests = [];
   failure = "none";
@@ -97,12 +98,14 @@ test("unconfigured registry drives a scripted Gemini agent through search, fetch
 test("provider resolution preserves configured credentials, explicit overrides and disable", async () => {
   assert.equal(resolveWebProvider({}), "parallel");
   assert.equal(resolveWebProvider({ FIRECRAWL_API_KEY: "configured" }), "firecrawl");
+  assert.equal(resolveWebProvider({ FIRECRAWL_API_URL: "http://localhost:3002" }), "firecrawl");
+  assert.equal(resolveWebProvider({ PERCEPTRON_WEB_PROVIDER: "firecrawl", FIRECRAWL_API_URL: "http://localhost:3002" }), "firecrawl");
   assert.equal(resolveWebProvider({ FIRECRAWL_API_KEY: "configured", PERCEPTRON_WEB_PROVIDER: "parallel" }), "parallel");
   process.env.PERCEPTRON_WEB_PROVIDER = "disabled";
   process.env.FIRECRAWL_API_KEY = "configured";
   assert.deepEqual(await createWebTools(context), []);
   assert.equal(requests.length, 0);
-  assert.throws(() => resolveWebProvider({ PERCEPTRON_WEB_PROVIDER: "firecrawl" }), /not configured/);
+  assert.throws(() => resolveWebProvider({ PERCEPTRON_WEB_PROVIDER: "firecrawl" }), /Configure FIRECRAWL/);
   assert.throws(() => resolveWebProvider({ PERCEPTRON_WEB_PROVIDER: "typo" }), /Unknown/);
   process.env.PERCEPTRON_WEB_PROVIDER = "firecrawl";
   assert.deepEqual((await createWebTools(context)).map((t) => t.name), ["scrapeUrls"]);

@@ -24,7 +24,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Coding agent web tools
 
-With no `FIRECRAWL_API_KEY` configured, the coding agent can use `searchWeb` to
+With neither `FIRECRAWL_API_KEY` nor `FIRECRAWL_API_URL` configured, the coding agent can use `searchWeb` to
 find current documentation and `scrapeUrls` to read reference pages through
 [Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp).
 Search uses Fast mode, with no Parallel account or API key required. For example,
@@ -35,9 +35,9 @@ Set `PERCEPTRON_WEB_PROVIDER` on the server to choose the behavior:
 
 | Value | Coding agent tools |
 | --- | --- |
-| `auto` (default) | Keep Firecrawl URL scraping when `FIRECRAWL_API_KEY` is set; otherwise use Parallel search and page fetching. |
+| `auto` (default) | Keep Firecrawl URL scraping when a Firecrawl key or custom API URL is set; otherwise use Parallel search and page fetching. |
 | `parallel` | Use anonymous Parallel search and page fetching, even when a Firecrawl key is set. |
-| `firecrawl` | Keep the existing URL scraper; requires `FIRECRAWL_API_KEY`. |
+| `firecrawl` | Keep the existing URL scraper; requires a key for the cloud API or a self-hosted `FIRECRAWL_API_URL`. |
 | `disabled` | Register no web tools for the coding agent. |
 
 Provider errors are returned to the agent without switching providers. Parallel

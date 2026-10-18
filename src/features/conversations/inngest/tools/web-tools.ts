@@ -7,11 +7,13 @@ export function resolveWebProvider(env: Record<string, string | undefined> = pro
   if (provider === "disabled") return "disabled";
   if (provider === "parallel") return "parallel";
   if (provider === "firecrawl") {
-    if (!env.FIRECRAWL_API_KEY) throw new Error("FIRECRAWL_API_KEY is not configured");
+    if (!env.FIRECRAWL_API_KEY && !env.FIRECRAWL_API_URL) {
+      throw new Error("Configure FIRECRAWL_API_KEY or a self-hosted FIRECRAWL_API_URL");
+    }
     return "firecrawl";
   }
   if (provider !== "auto") throw new Error(`Unknown web provider: ${provider}`);
-  return env.FIRECRAWL_API_KEY ? "firecrawl" : "parallel";
+  return env.FIRECRAWL_API_KEY || env.FIRECRAWL_API_URL ? "firecrawl" : "parallel";
 }
 
 const searchSchema = z.object({

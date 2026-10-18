@@ -5,7 +5,6 @@ import { auth } from "@clerk/nextjs/server";
 import { anthropic } from "@ai-sdk/anthropic";
 import { google } from "@ai-sdk/google";
 
-import { firecrawl } from "@/lib/firecrawl";
 
 const quickEditSchema = z.object({
   editedCode: z
@@ -74,6 +73,7 @@ export async function POST(request: Request) {
       const scrapedResults = await Promise.all(
         urls.map(async (url) => {
           try {
+            const { firecrawl } = await import("@/lib/firecrawl");
             const result = await firecrawl.scrape(url, {
               formats: ["markdown"],
             });

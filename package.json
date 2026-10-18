@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:web": "tsx --test tests/web-tools.test.ts"
+    "test:web": "tsx --test tests/web-*.test.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.81",
